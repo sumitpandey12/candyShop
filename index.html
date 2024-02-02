@@ -1,0 +1,124 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link
+      rel="stylesheet"
+      href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css"
+    />
+    <title>Candy Shop</title>
+  </head>
+  <body>
+    <div class="container">
+      <h2>Candy Shop</h2>
+      <form id="expenseForm" class="row">
+        <div class="form-group p-2">
+          <label for="name">Name:</label>
+          <input type="text" class="form-control" id="name" required />
+        </div>
+        <div class="form-group p-2">
+          <label for="description">Description:</label>
+          <input type="text" class="form-control" id="description" required />
+        </div>
+        <div class="form-group p-2">
+          <label for="amount">Amount:</label>
+          <input type="number" class="form-control" id="amount" required />
+        </div>
+        <div class="form-group p-2">
+          <label for="quantity">Quantity:</label>
+          <input type="number" class="form-control" id="quantity" required />
+        </div>
+        <div class="form-group p-2">
+          <div></div>
+          <button type="submit" class="btn btn-primary">Save</button>
+        </div>
+      </form>
+
+      <div id="expenseList" class="mt-4">
+        <h3>Candy List</h3>
+        <ul class="list-group" id="expenses">
+          <!-- Expense items will be added dynamically here -->
+        </ul>
+      </div>
+    </div>
+    <script>
+      document.addEventListener("DOMContentLoaded", function () {
+        const expenseForm = document.getElementById("expenseForm");
+        const expensesList = document.getElementById("expenses");
+
+        expenseForm.addEventListener("submit", function (event) {
+          event.preventDefault();
+
+          const amount = document.getElementById("amount").value;
+          const description = document.getElementById("description").value;
+          const name = document.getElementById("name").value;
+          const quantity = document.getElementById("quantity").value;
+
+          if (amount && description && quantity) {
+            const expense = {
+              name: name,
+              description: description,
+              amount: amount,
+              quantity: quantity,
+            };
+
+            // Save expense to local storage
+            let expenses = JSON.parse(localStorage.getItem("expenses")) || [];
+            expenses.push(expense);
+            localStorage.setItem("expenses", JSON.stringify(expenses));
+
+            // Clear form fields
+            expenseForm.reset();
+
+            // Display expenses
+            displayExpenses();
+          } else {
+            alert("Please fill in all fields.");
+          }
+        });
+
+        // Display expenses from local storage
+        function displayExpenses() {
+          expensesList.innerHTML = "";
+          let expenses = JSON.parse(localStorage.getItem("expenses")) || [];
+          expenses.forEach(function (expense, index) {
+            const li = document.createElement("li");
+            li.className = "list-group-item";
+            li.innerHTML = `
+            <span> ${expense.name}, ${expense.description}, ${expense.amount} -  (${expense.quantity})</span>
+            <button type="button" class="btn btn-primary btn-sm float-right" onclick="buy1(${index})">Buy 1</button>
+            <button type="button" class="btn btn-primary btn-sm float-right mr-2" onclick="buy2(${index})">Buy 2</button>
+            <button type="button" class="btn btn-primary btn-sm float-right mr-2" onclick="buy3(${index})">Buy 3</button>
+          `;
+            expensesList.appendChild(li);
+          });
+        }
+
+        window.buy1 = function (index) {
+          let expenses = JSON.parse(localStorage.getItem("expenses")) || [];
+          expenses[index].quantity -= 1;
+          localStorage.setItem("expenses", JSON.stringify(expenses));
+          displayExpenses();
+        };
+
+        window.buy2 = function (index) {
+          let expenses = JSON.parse(localStorage.getItem("expenses")) || [];
+          expenses[index].quantity -= 2;
+          localStorage.setItem("expenses", JSON.stringify(expenses));
+          displayExpenses();
+        };
+
+        window.buy3 = function (index) {
+          let expenses = JSON.parse(localStorage.getItem("expenses")) || [];
+          expenses[index].quantity -= 3;
+          localStorage.setItem("expenses", JSON.stringify(expenses));
+          displayExpenses();
+        };
+
+        // Initial display
+        displayExpenses();
+      });
+    </script>
+  </body>
+</html>
